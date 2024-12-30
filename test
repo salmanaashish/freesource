@@ -1,0 +1,61 @@
+
+
+$(document).ready(function ()
+{
+    var dateofBirth = "new_coursestartdate";
+    SetFieldAsRequired(dateofBirth);
+});
+function SetFieldAsRequired(fieldName)
+{
+    if (typeof (Page_Validators) == 'undefined') return;
+    if ($("#" + fieldName) != undefined && $("#" + fieldName + "_label") != undefined)
+    {
+        $("#" + fieldName).prop('required', true);
+        $("#" + fieldName).closest(".control").prev().addClass("required"); // Create new validator object 
+        var Requiredvalidator = document.createElement('span');
+        Requiredvalidator.style.display = "none";
+        Requiredvalidator.id = fieldName + "Validator";
+        Requiredvalidator.controltovalidate = fieldName;
+        Requiredvalidator.errormessage = "<a href='#" + fieldName + "_label'>" + $("#" + fieldName + "_label").html() + " is a required field.</a>";
+        Requiredvalidator.initialvalue = "";
+        Requiredvalidator.evaluationfunction = function ()
+        {
+            var fieldControl = $("#" + fieldName); if (fieldControl.is("span"))
+            {
+                var value0 = $("#" + fieldName + "_0").prop("checked");
+                var value1 = $("#" + fieldName + "_1").prop("checked");
+                if (value0 == false && value1 == false)
+                {
+                    return false;
+                }
+                else {
+                    return true;
+                }
+            }
+            else {
+                var value = $("#" + fieldName).val();
+                if (value == null || value == "")
+                { return false; } else { return true; }
+            }
+        }; // Add the new validator to the page validators array 
+        Page_Validators.push(Requiredvalidator);
+    }
+}
+function SetFieldAsNonRequired(fieldName)
+{
+    if (typeof (Page_Validators) == 'undefined')
+        return;
+    if ($("#" + fieldName) != undefined)
+    {
+        $("#" + fieldName).closest(".control").prev().removeClass("required");
+        $("#" + fieldName).prop('required', false);
+        for (i = 0; i < Page_Validators.length; i++)
+        {
+            if (Page_Validators[i].id == fieldName + "Validator")
+            {
+                // Remove the current field's 'Required' validator from 'Page_Validators' array
+                Page_Validators.splice(i);
+            }
+        }
+    }
+}
